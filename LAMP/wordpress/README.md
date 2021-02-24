@@ -65,6 +65,14 @@ Version sử dụng:
 <a name="http"></a>
 ### 1. Tạo VitualHost chạy HTTP
 
+- Tạo thư mục chứa document trong `/var/www/html/`
+
+`mkdir /var/www/html/wordpress.linex.vn`
+
+- Tạo thư mục chứa log trong `/var/www/html/wordpress.linex.vn`
+
+`mkdir /var/www/html/wordpress.linex.vn/log`
+
 - Tạo file .conf trong `/etc/httpd/conf.d/`
 
 `vim /etc/httpd/conf.d/wordpress.linex.vn.conf`
@@ -264,7 +272,7 @@ Copy file conf mẫu
 
 Sửa file conf vừa copy thêm Database
 
-`vim /var/www/html/test.com/wordpress/wp-config.php`
+`vim /var/www/html/wordpress.linex.vn/wordpress/wp-config.php`
 
 Thêm các dòng:
 
