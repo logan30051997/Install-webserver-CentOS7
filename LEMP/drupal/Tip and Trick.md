@@ -1,7 +1,7 @@
 # Tips và Tricks cấu hình
 
 ## Nginx Tip 1. Tổ chức các Nginx config files
-
+ 
 Thông thường các file config được đặt trong /etc/nginx
 
 Có thể tổ chức các config files giống như cài đặt Apache trên Ubuntu/Debian:
