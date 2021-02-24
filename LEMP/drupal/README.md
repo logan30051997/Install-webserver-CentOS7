@@ -1,9 +1,9 @@
-# Install LEMP stack CentOS7 Drupal)
+# Install LEMP stack CentOS7 Drupal
 
 
 #### Mục lục
  
-[Requiriments](#requiriments)
+[Requirements](#requirements)
  
 [I. Install Nginx](#Nginx)
  - [1. Tạo VitualHost chạy HTTP](#http)
@@ -29,8 +29,6 @@ System requirements:
 
 [Drupal Requirements](https://www.drupal.org/docs/system-requirements)
 
-[Wordpress Requirements](https://wordpress.org/support/article/requirements/)
-
 Version sử dụng:
 
 - Nginx v1.16.1 [Repo epel](http://nginx.org/packages/centos/7/x86_64/)
@@ -40,9 +38,6 @@ Version sử dụng:
 - php-fpm v8.0 [Repo php-fpm](http://rpms.remirepo.net/enterprise/remi-release-7.rpm)
 
 - Drupal newversion 9.1.3 [Drupal](https://www.drupal.org/download-latest/tar.gz)
-
-- Wordpress newversion 5.6.2 [Wordpress](https://wordpress.org/latest.zip)
-
 
 =============================================
 <a name="Nginx"></a>
