@@ -19,3 +19,4 @@ https://viblo.asia/p/tuning-cho-php-fpm-WAyK8eanZxX?fbclid=IwAR1b93_favPSAJNCEV6
 https://viblo.asia/p/quan-ly-php-fpm-process-gGJ59O1JZX2
 
 https://vietnetwork.vn/php-hypertext-preprocessor/su-khac-nhau-giua-cac-php-handler-dso-cgi-suphp-fastcgi/msg68489/
+ 
