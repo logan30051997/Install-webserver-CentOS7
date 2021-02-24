@@ -1,5 +1,5 @@
 # Tips và Tricks cấu hình Nginx
-
+ 
 ## Nginx Tip 1. Tổ chức các Nginx config files
 
 Thông thường các file config được đặt trong /etc/nginx
