@@ -306,3 +306,4 @@ Kết quả khi nhập domain VitualHost
 - Phân quyền File 644
 
 `find /var/www/html/wordpress.linex.vn/wordpress -type f -print0 | xargs -0 chmod 644`
+ 
