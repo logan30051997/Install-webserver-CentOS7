@@ -197,11 +197,11 @@ SHOW GRANTS FOR 'wordpress'@localhost;
 [wordpress]
 listen = 127.0.0.1:9000
 listen.allowed_clients = 127.0.0.1
-listen.owner = nginx
-listen.group = nginx
+listen.owner = apache
+listen.group = apache
 listen.mode = 0660
-user = nginx
-group = nginx
+user = apache
+group = apache
 pm = dynamic
 pm.max_children = 5
 pm.start_servers = 3
@@ -237,7 +237,7 @@ Thêm cấu hình `proxy:fcgi..` sau vào: `vim /etc/httpd/conf.d/php.conf`
 
 `systemctl reload php-fpm`
 
-`systemctl reload nginx`
+`systemctl reload httpd`
 
 <a name="wordpress"></a>
 ## IV. Install Wordpress
