@@ -1,6 +1,5 @@
 # Install LEMP stack CentOS7 Drupal
 
-
 #### Mục lục
  
 [Requirements](#requirements)
