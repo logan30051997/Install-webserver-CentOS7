@@ -1,8 +1,3 @@
----
-title: Wordpress
-tags: []
----
-
 # Install LEMP stack CentOS7 Wordpress
  
 #### Mục lục
@@ -82,7 +77,7 @@ Version sử dụng:
 server{
         listen 80;
         server_name wordpress.linex.vn;
-        root /home/www/wordpress.linex.vn/wordpress/;
+        root /home/www/wordpress.linex.vn/;
         error_log /var/log/nginx/wordpress.linex.vn_error.log error;
         access_log /var/log/nginx/wordpress.linex.vn_access.log main;
     location /{
@@ -121,7 +116,7 @@ server {
        #listen       80;
         listen       443 ssl;
         server_name  wordpress.linex.vn;
-        root         /home/www/wordpress.linex.vn/wordpress/;
+        root         /home/www/wordpress.linex.vn/;
         error_log /var/log/nginx/wordpress.linex.vn_error.log error;
         access_log /var/log/nginx/wordpress.linex.vn_access.log main;
         ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
@@ -273,19 +268,23 @@ Cài Wordpress version mới nhất
 
 Giải nén file vừa cài vào thư mục chứa
 
-`tar -xvzf latest.tar.gz -C /home/www/test.com`
+`tar -xvzf latest.tar.gz -C /home/www/`
+
+Đổi tên để Nginx đọc
+
+`mv /home/www/wordpress /home/www/wordpress.linex.vn`
 
 Phân quyền cho wordpress
 
-`chown -R nginx /home/www/test.com/wordpress`
+`chown -R nginx /home/www/wordpress.linex.vn`
 
 Copy file conf mẫu
 
-`cp /home/www/test.com/wordpress/wp-config-sample.php /home/www/test.com/wordpress/wp-config.php`
+`cp /home/www/wordpress.linex.vn/wp-config-sample.php /home/www/wordpress.linex.vn/wp-config.php`
 
 Sửa file conf vừa copy thêm Database
 
-`vim /home/www/test.com/wordpress/wp-config.php`
+`vim /home/www/wordpress.linex.vn/wp-config.php`
 
 Thêm các dòng:
 
@@ -315,11 +314,11 @@ Kết quả khi nhập domain VitualHost
 
 - Phân quyền Folder 755
 
-`find /home/www/test.com/wordpress -type d -print0 | xargs -0 chmod 755`
+`find /home/www/wordpress.linex.vn -type d -print0 | xargs -0 chmod 755`
 
 - Phân quyền File 644
 
-`find /home/www/test.com/wordpress -type f -print0 | xargs -0 chmod 644`  
+`find /home/www/wordpress.linex.vn -type f -print0 | xargs -0 chmod 644`  
 ### 3. Secure Wordpress
 Lợi dụng pingback để tấn công DDOS.  
 - Trong wordpress, Pingback là dạng XMLRPC API để kiểm tra phản hồi của các URL nguồn. Nếu nguồn có thực, WordPress sẽ đăng tải 1 đoạn comment với thông tin của website nguồn để thông báo rằng có người đang đề cập đến bài viết. Pingback trong WordPress có thể bị lợi dụng trong các cuộc tấn công DDOS. Điều này dẫn đến tiêu tốn tài nguyên cho server khi có quá nhiều pingback được gửi  
@@ -343,7 +342,7 @@ Ngăn chặn người dùng nobody truy cập vào các file .php
 
 web_user=nobody
 conf_file=/etc/nginx/conf.d/secure_php.conf
-docroots=( /home/wordpress4.linex.vn )
+docroots=( /home/www/wordpress.linex.vn )
 
 cat <<EOF > $conf_file
 # map php script which is not owned by nobody
