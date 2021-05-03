@@ -1,3 +1,8 @@
+---
+title: Wordpress
+tags: []
+---
+
 # Install LEMP stack CentOS7 Wordpress
  
 #### Mục lục
@@ -30,11 +35,12 @@ Version sử dụng:
 
 - Nginx v1.16.1 [Repo epel](http://nginx.org/packages/centos/7/x86_64/)
 
-- Mariadb-server v10.4 [Repo mariadb](https://mariadb.org/download/#mariadb-repositories)
+- Mariadb-server v10.3 [Repo mariadb](https://mariadb.org/download/#mariadb-repositories)
 
-- php-fpm v8.0 [Repo php-fpm](http://rpms.remirepo.net/enterprise/remi-release-7.rpm)
+- php-fpm v7.3 [Repo php-fpm](http://rpms.remirepo.net/enterprise/remi-release-7.rpm)
 
-- Wordpress newversion 5.6.2 [Wordpress](https://wordpress.org/latest.zip)
+- Wordpress newversion [WordpressNew](https://wordpress.org/latest.zip) or [Wordpress4.9.17](https://wordpress.org/wordpress-4.9.17.tar.gz)
+
 
 
 =============================================
@@ -125,7 +131,7 @@ server {
         ssl_certificate_key  /etc/pki/tls/certs/server.key;
 location /{
         index index.html index.php;
-        try_files $uri /index.php?$query_string;
+        try_files $uri $uri/ /index.php?$args;
 
      }
 }
@@ -133,7 +139,7 @@ location /{
 <a name="Mariadb"></a>
 ## II. Install Mariadb
 
-- Cài Mariadb v10.4 với repo [link](https://mariadb.org/download/#mariadb-repositories) có hướng dẫn
+- Cài Mariadb v10.3 với repo [link](https://mariadb.org/download/#mariadb-repositories) có hướng dẫn
 
 ```sudo yum install MariaDB-server MariaDB-client```
 
@@ -209,7 +215,8 @@ SHOW GRANTS FOR 'wordpress'@localhost;
 
 ```
 [wordpress]
-listen = 127.0.0.1:9000
+#listen = 127.0.0.1:9000 --chạy qua port 9000
+listen = /var/run/php-fpm/php-fpm.sock
 listen.allowed_clients = 127.0.0.1
 listen.owner = nginx
 listen.group = nginx
@@ -241,10 +248,10 @@ Thêm cấu hình sau: `vim /etc/nginx/conf.d/wordpress.linex.vn.conf`
 
 ```
 location ~ \.php {
-#   fastcgi_pass unix:/var/run/php_fpm.sock;
-    fastcgi_pass 127.0.0.1:9000;
-    include        /etc/nginx/fastcgi_params;
-    fastcgi_param   SCRIPT_FILENAME $document_root/$fastcgi_script_name;
+        fastcgi_pass unix:/var/run/php-fpm/php-fpm.sock;
+#       fastcgi_pass 127.0.0.1:9000;
+        include        /etc/nginx/fastcgi_params;
+        fastcgi_param   SCRIPT_FILENAME $document_root/$fastcgi_script_name;
 }
 ```
 - reload php-fpm, nginx
@@ -312,4 +319,67 @@ Kết quả khi nhập domain VitualHost
 
 - Phân quyền File 644
 
-`find /home/www/test.com/wordpress -type f -print0 | xargs -0 chmod 644`
+`find /home/www/test.com/wordpress -type f -print0 | xargs -0 chmod 644`  
+### 3. Secure Wordpress
+Lợi dụng pingback để tấn công DDOS.  
+- Trong wordpress, Pingback là dạng XMLRPC API để kiểm tra phản hồi của các URL nguồn. Nếu nguồn có thực, WordPress sẽ đăng tải 1 đoạn comment với thông tin của website nguồn để thông báo rằng có người đang đề cập đến bài viết. Pingback trong WordPress có thể bị lợi dụng trong các cuộc tấn công DDOS. Điều này dẫn đến tiêu tốn tài nguyên cho server khi có quá nhiều pingback được gửi  
+
+Tấn công Brute force sử dụng XML-RPC
+- Mỗi khi xmlrpc.php đưa ra yêu cầu, nó sẽ gửi tên người dùng và mật khẩu để xác thực. Xmlrpc.php gửi thông tin đăng nhập theo mọi yêu cầu mà tin tặc có thể sử dụng để truy cập trang web của bạn. Và các cuộc tấn công brute force có thể dẫn đến chèn nội dung, xóa mã hoặc hỏng cơ sở dữ liệu.
+
+Ngăn chặn truy cập vào file XML-RPC  
+```
+location ~* /xmlrpc.php$ {
+    allow 127.0.1.1;
+    deny all;
+}
+```
+Ngăn chặn người dùng nobody truy cập vào các file .php
+- Cần tìm ra danh sách các file không thuộc quyền sở hữu bởi user nobody
+- Mỗi khi user truy cập vào 1 đường dẫn thì URI chứa file .php không được sở hữu bởi nobody sẽ map với 1 giá trị của php_allowed
+
+```
+#!/bin/bash
+
+web_user=nobody
+conf_file=/etc/nginx/conf.d/secure_php.conf
+docroots=( /home/wordpress4.linex.vn )
+
+cat <<EOF > $conf_file
+# map php script which is not owned by nobody
+# this is helpful to prevent execution of (malicious) code that uploaded via web
+map \$fastcgi_script_name \$php_allowed {
+    default 0;
+EOF
+for docroot in "${docroots[@]}"; do
+    len=${#docroot}
+    for file in $( find ${docroot}/ -type f ! -user $web_user -name "*.php" )
+    do
+        echo "    '${file:len}' 1;" >> $conf_file
+    done
+done
+echo "}" >> $conf_file
+
+/usr/sbin/nginx -q -t && systemctl reload nginx.servic
+```
+- Nếu php_allowed khác 1 thì sẽ không cho truy cập vào file và return 403
+```
+location ~ \.php$ {
+    if ($php_allowed != 1) { return 403; }
+    include fastcgi_params;
+    fastcgi_param HTTPS on;
+    fastcgi_read_timeout 180;
+    fastcgi_pass unix:/var/run/php7-fpm.sock;
+    fastcgi_param   SCRIPT_FILENAME $document_root$fastcgi_script_name;
+}
+```
+Ngăn chặn truy cập vào file .php trong thư mục wp-content và wp-includes
+```
+location ~ /(wp-content|wp-includes)/ {
+    location ~* \.php { return 403; }
+}
+```
+Các thư mục được phân quyền nobody
+- wp-content/plugins
+- wp-content/upgrade
+- wp-content/uploads
