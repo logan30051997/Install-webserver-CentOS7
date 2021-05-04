@@ -210,7 +210,7 @@ SHOW GRANTS FOR 'wordpress'@localhost;
 
 ```
 [wordpress]
-#listen = 127.0.0.1:9000 --chạy qua port 9000
+;listen = 127.0.0.1:9000 --chạy qua port 9000
 listen = /var/run/php-fpm/php-fpm.sock
 listen.allowed_clients = 127.0.0.1
 listen.owner = nginx
