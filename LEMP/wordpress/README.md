@@ -190,7 +190,7 @@ SHOW GRANTS FOR 'wordpress'@localhost;
 
 *Enabled version mà mình muốn cài (Xem repo version tại ```cd /etc/yum.repos.d/```)*
 
-```yum-config-manager --enable remi-php80 ```
+```yum-config-manager --enable remi-php73 ```
 
 ```sudo yum install php php-fpm php-mysqlnd php-dom php-gd php-xml php-SimpleXML```
 
@@ -336,6 +336,8 @@ location ~* /xmlrpc.php$ {
 Ngăn chặn người dùng nobody truy cập vào các file .php
 - Cần tìm ra danh sách các file không thuộc quyền sở hữu bởi user nobody
 - Mỗi khi user truy cập vào 1 đường dẫn thì URI chứa file .php không được sở hữu bởi nobody sẽ map với 1 giá trị của php_allowed
+
+`vim /etc/nginx/php_allowed.sh`
 
 ```
 #!/bin/bash
